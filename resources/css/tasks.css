@@ -1,0 +1,42 @@
+.task
+{
+    /* colour */
+    background-color: #abab98;
+    color: #000000;
+    /* position */
+    align-items: center;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 15px;
+    /* size */
+    width: 400px;
+}
+
+#tasks-div
+{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+#add-task
+{
+    /* colour */
+    background-color: #abab98;
+    color: #000000;
+    /* size */
+    width: fit-content;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.task-icons
+{
+    display: flex;
+}
+
+.task-icons > *
+{
+    margin: 10px 10px 0;
+}
