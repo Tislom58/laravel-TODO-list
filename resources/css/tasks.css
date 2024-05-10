@@ -38,5 +38,22 @@
 
 .task-icons > *
 {
+    width: 30px;
+    height: 30px;
     margin: 10px 10px 0;
+}
+
+#complete-icon
+{
+    background: url("/resources/images/complete-icon.svg") center no-repeat;
+}
+
+#edit-icon
+{
+    background: url("/resources/images/edit-icon.svg") center no-repeat;
+}
+
+#delete-icon
+{
+    background: url("/resources/images/delete-icon.svg") center no-repeat;
 }
