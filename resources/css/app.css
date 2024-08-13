@@ -1,0 +1,62 @@
+.task
+{
+    display: flex;
+    margin-top: 10px;
+}
+
+.task > *
+{
+    margin: 5px;
+}
+
+
+/*
+
+#tasks-div
+{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+#add-task
+{
+    !* colour *!
+    background-color: #abab98;
+    color: #000000;
+    !* size *!
+    width: fit-content;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.task-icons
+{
+    display: flex;
+}
+
+.task-icons > *
+{
+    width: 30px;
+    height: 30px;
+    margin: 10px 10px 0;
+}
+*/
+
+/*
+#complete-icon
+{
+    background: url("/resources/images/complete-icon.svg") center no-repeat;
+}
+
+#edit-icon
+{
+    background: url("/resources/images/edit-icon.svg") center no-repeat;
+}
+
+#delete-icon
+{
+    background: url("/resources/images/delete-icon.svg") center no-repeat;
+}
+*/
