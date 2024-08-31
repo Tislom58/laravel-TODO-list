@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\Tag;
-use App\Models\TasksTags;
+use Illuminate\Database\Eloquent\Builder;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index(): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
         $tasks = Task::where('archived', 0)->get();
 
@@ -19,7 +22,7 @@ class TaskController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
         $tags = Tag::all('name');
 
@@ -36,21 +39,16 @@ class TaskController extends Controller
 
         $task->save();
 
-        foreach($request->tags as $tag)
-        {
-            $task_tag = new TasksTags();
-            $task_tag->task_id = $task->id;
-            $task_tag->tag_id = Tag::where('name', $tag)->firstOrFail()->id;
+        $tags = Tag::whereIn('name', $request->tags)->pluck('id');
 
-            $task_tag->save();
-        }
+        $task->tags()->attach($tags);
 
         return redirect('/tasks');
     }
 
     public function complete(string $id): RedirectResponse
     {
-        $task = Task::where('id', $id)->firstOrFail();
+        $task = Task::find($id);
         $task->archived = 1;
 
         $task->save();
@@ -60,15 +58,14 @@ class TaskController extends Controller
 
     public function destroy(string $id): RedirectResponse
     {
-        $task = Task::where('id', $id)->firstOrFail();
-        $task->delete();
+        Task::find($id)->delete();
 
         return redirect('/tasks');
     }
 
-    public function edit(string $id)
+    public function edit(string $id): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
-        $task = Task::where('id', $id)->firstOrFail();
+        $task = Task::find($id);
 
         return view('tasks.edit', [
             'task' => $task,
@@ -84,35 +81,26 @@ class TaskController extends Controller
 
         $task->save();
 
-        $current_tags = TasksTags::where('task_id', $id)->get();
-        $request_tags = $request->tags;
-        $new_tag_ids = [];
-        $current_tag_ids = [];
-
-        foreach($request_tags as $tag)
-            $new_tag_ids[] = Tag::where('name', $tag)->firstOrFail()->id;
-
-        foreach($current_tags as $current_tag)
-        // Remove tag records associated with task
-        {
-            if(!(in_array($current_tag->id, $new_tag_ids)))
-                $current_tag->delete();
-            else
-                $current_tag_ids[] = $current_tag->id;
-        }
-
-        foreach($new_tag_ids as $tag_id)
-        // Add records of new tags except those already present
-        {
-            if(!(in_array($tag_id, $current_tag_ids)))
-            {
-                $task_tag = new TasksTags();
-                $task_tag->task_id = $id;
-                $task_tag->tag_id = $tag_id;
-                $task_tag->save();
-            }
-        }
+        $tag_keys = Tag::whereIn('name', $request->tags)->pluck('id');
+        $task->tags()->sync($tag_keys);
 
         return redirect('/tasks');
+    }
+
+    public function filter(Request $request): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
+    {
+        $tag_keys = Tag::whereIn('name', $request->filter)->pluck('id');
+
+        $task_keys = Task::whereHas('tags', function (Builder $query) use ($tag_keys) {
+            $query->whereIn('tag_id', $tag_keys)
+                ->groupBy('task_id')
+                ->havingRaw('COUNT(*) = ?', [count($tag_keys)]);
+        })->pluck('id');
+
+        $tasks = Task::find($task_keys);
+
+        return view('tasks.filter', [
+            'tasks' => $tasks,
+        ]);
     }
 }

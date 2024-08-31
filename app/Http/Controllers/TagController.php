@@ -37,19 +37,14 @@ class TagController extends Controller
 
     public function destroy(string $id): RedirectResponse
     {
-        $tag = Tag::find($id);
-        $tag->delete();
-
-        $task_tags = TasksTags::where('tag_id', $id)->get();
-        foreach($task_tags as $tag)
-            $tag->delete();
+        Tag::find($id)->delete();
 
         return redirect('/tags');
     }
 
     public function edit(string $id)
     {
-        $tag = Tag::where('id', $id)->firstOrFail();
+        $tag = Tag::find($id);
 
         return view('tags.edit', [
             'tag' => $tag,
@@ -58,7 +53,7 @@ class TagController extends Controller
 
     public function update(Request $request, string $id): RedirectResponse
     {
-        $tag = Tag::where('id', $id)->firstOrFail();
+        $tag = Tag::find($id);
 
         $tag->name = $request->name;
         $tag->color = $request->color;

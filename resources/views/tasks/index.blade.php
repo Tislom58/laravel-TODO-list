@@ -6,19 +6,31 @@
 
         <a href="/tasks/create">Create a new task</a>
         <a href="/tags">Tags</a>
+
+        <form action="/tasks/filter" method="post">
+            @csrf
+            @method('put')
+            <label for="filter">Filter by tags</label>
+            <select multiple id="filter" name="filter[]">
+                @foreach(\App\Models\Tag::all() as $tag)
+                    <option>{{ $tag->name }}</option>
+                @endforeach
+            </select>
+            <input type="submit" value="Search">
+        </form>
+
+        <p>-----------------------------------------------</p>
+
         @foreach($tasks as $task)
             @php
                 // Obtain tags associated with each task
-                $tag_ids = \App\Models\TasksTags::where('task_id', $task->id)->pluck('tag_id');
-                $tags = [];
-                foreach($tag_ids as $tag_id)
-                    $tags[] = \App\Models\Tag::find($tag_id);
+                $tags = $task->tags;
             @endphp
             <div class="task" id="{{ $task->id }}">
                 <p> {{ $task->description }} | {{ $task->due_date }}</p>
                 <form action="/tasks/{{ $task->id }}" method="post">
                     @csrf
-                    @method('put')
+                    @method('patch')
                     <input type="submit" value="Complete">
                 </form>
                 <a href="/tasks/{{ $task->id }}/edit">
