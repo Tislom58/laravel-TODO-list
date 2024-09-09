@@ -9,13 +9,16 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
-class TaskController extends Controller
+class   TaskController extends Controller
 {
     public function index(): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
-        $tasks = Task::where('archived', 0)->get();
+        $user = User::find(Auth::id());
+        $tasks = $user->tasks;
 
         return view('tasks.index', [
             'tasks' => $tasks,
@@ -24,7 +27,8 @@ class TaskController extends Controller
 
     public function create(): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
-        $tags = Tag::all('name');
+        $user = User::find(Auth::id());
+        $tags = $user->tags;
 
         return view('tasks.create', [
             'tags' => $tags,
@@ -34,14 +38,21 @@ class TaskController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $task = new Task();
+        $user = User::find(Auth::id());
+
         $task->description = $request->description;
         $task->due_date = $request->due_date;
+        $task->user_id = $user->id;
 
         $task->save();
 
-        $tags = Tag::whereIn('name', $request->tags)->pluck('id');
+        if(isset($request->tags)){
+            $tags = $user->tags()
+                ->whereIn('name', $request->tags)
+                ->pluck('id');
 
-        $task->tags()->attach($tags);
+            $task->tags()->attach($tags);
+        }
 
         return redirect('/tasks');
     }
@@ -81,7 +92,11 @@ class TaskController extends Controller
 
         $task->save();
 
-        $tag_keys = Tag::whereIn('name', $request->tags)->pluck('id');
+        $tag_keys = User::find(Auth::id())
+            ->tags()
+            ->whereIn('name', $request->tags)
+            ->pluck('id');
+
         $task->tags()->sync($tag_keys);
 
         return redirect('/tasks');
@@ -89,7 +104,10 @@ class TaskController extends Controller
 
     public function filter(Request $request): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
-        $tag_keys = Tag::whereIn('name', $request->filter)->pluck('id');
+        $user = User::find(Auth::id());
+        $tag_keys = $user->tags()
+            ->whereIn('name', $request->filter)
+            ->pluck('id');
 
         $task_keys = Task::whereHas('tags', function (Builder $query) use ($tag_keys) {
             $query->whereIn('tag_id', $tag_keys)

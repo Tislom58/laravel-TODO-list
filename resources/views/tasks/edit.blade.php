@@ -1,3 +1,7 @@
+@php
+    use App\Models\User;
+    use Illuminate\Support\Facades\Auth;
+@endphp
 @extends('layouts.layout')
 
 @section('content')
@@ -7,12 +11,8 @@
             @method('put')
             @php
                 // Obtain tags associated with each task
-                $tag_ids = \App\Models\TasksTags::where('task_id', $task->id)->pluck('tag_id');
-                $task_tags = [];
-                foreach($tag_ids as $tag_id)
-                    $task_tags[] = \App\Models\Tag::find($tag_id)->name;
-
-                $tags = \App\Models\Tag::all();
+                $task_tags = $task->tags()->pluck('name')->toArray();
+                $tags = User::find(Auth::id())->tags;
             @endphp
             <div class="task" id="{{ $task->id }}">
                 <input type="text" name="description" value="{{ $task->description }}">
@@ -21,7 +21,7 @@
 
                 <select multiple name="tags[]">
                     @foreach($tags as $tag)
-{{--                    Display tags and preselect ones that are active --}}
+                        {{--                    Display tags and preselect ones that are active --}}
                         @if( in_array($tag->name, $task_tags) )
                             <option selected="selected" style="color: {{ $tag->color }}"> {{ $tag->name }} </option>
                         @else

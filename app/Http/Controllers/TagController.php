@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\TasksTags;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 use App\Models\Tag;
+use Illuminate\Support\Facades\Auth;
 
 class TagController extends Controller
 {
     public function index()
     {
-        $tags = Tag::all();
+        $user = User::find(Auth::id());
+        $tags = $user->tags;
 
         return view('tags.index', [
             'tags' => $tags,
@@ -27,8 +30,10 @@ class TagController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $tag = new Tag();
+        $user = User::find(Auth::id());
         $tag->name = $request->name;
         $tag->color = $request->color;
+        $tag->user_id = $user->id;
 
         $tag->save();
 

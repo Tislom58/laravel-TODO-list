@@ -2,6 +2,7 @@
 
 @section('content')
     <div>
+        <h1>User ID: {{ Auth::id() }}</h1>
         <h3>Tasks:</h3>
 
         <a href="/tasks/create">Create a new task</a>
@@ -11,7 +12,7 @@
             @method('put')
             <label for="filter">Filter by tags</label>
             <select multiple id="filter" name="filter[]">
-                @foreach(\App\Models\Tag::all() as $tag)
+                @foreach(\App\Models\User::find(Auth::id())->tags as $tag)
                     <option>{{ $tag->name }}</option>
                 @endforeach
             </select>
