@@ -9,6 +9,13 @@
     <!-- Style -->
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/app.css') }}">
 
+    <nav>
+        <a href="/tasks">Tasks</a>
+        <a href="/tags">Tags</a>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+    </nav>
+
 </head>
     <body>
         @yield('content')

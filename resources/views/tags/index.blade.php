@@ -4,7 +4,6 @@
 <div>
     <h3>Tags:</h3>
     <a href="/tags/create">Create a new tag</a>
-    <a href="/tasks">Tasks</a>
 
     @foreach($tags as $tag)
         <div class="task" id="{{ $tag->id }}">

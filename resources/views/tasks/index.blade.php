@@ -5,7 +5,6 @@
         <h3>Tasks:</h3>
 
         <a href="/tasks/create">Create a new task</a>
-        <a href="/tags">Tags</a>
 
         <form action="/tasks/filter" method="post">
             @csrf
