@@ -11,6 +11,7 @@ use App\Models\Task;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
 
 class   TaskController extends Controller
@@ -74,13 +75,17 @@ class   TaskController extends Controller
         return redirect('/tasks');
     }
 
-    public function edit(string $id): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
+    public function edit(string $id): Factory|View|Application|Redirector|RedirectResponse|\Illuminate\Contracts\Foundation\Application
     {
         $task = Task::find($id);
 
-        return view('tasks.edit', [
-            'task' => $task,
-        ]);
+        if (User::find(Auth::id())->id === $task->user_id)
+        {
+            return view('tasks.edit', [
+                'task' => $task,
+            ]);
+        }
+        return redirect('/tasks');
     }
 
     public function update(Request $request, string $id): RedirectResponse
@@ -92,12 +97,15 @@ class   TaskController extends Controller
 
         $task->save();
 
-        $tag_keys = User::find(Auth::id())
-            ->tags()
-            ->whereIn('name', $request->tags)
-            ->pluck('id');
+        if($request->tags)
+        {
+            $tag_keys = User::find(Auth::id())
+                ->tags()
+                ->whereIn('name', $request->tags)
+                ->pluck('id');
 
-        $task->tags()->sync($tag_keys);
+            $task->tags()->sync($tag_keys);
+        }
 
         return redirect('/tasks');
     }

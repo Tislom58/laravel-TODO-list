@@ -9,15 +9,18 @@
     <!-- Style -->
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/app.css') }}">
 
-    <nav>
+    {{--<nav>
         <a href="/tasks">Tasks</a>
         <a href="/tags">Tags</a>
         <a href="/login">Login</a>
         <a href="/register">Register</a>
-    </nav>
+    </nav>--}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @include('layouts.navigation')
 
 </head>
-    <body>
+    <body class="bg-gray-600 h-screen">
         @yield('content')
     </body>
 </html>

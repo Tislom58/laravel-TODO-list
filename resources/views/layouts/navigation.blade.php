@@ -15,6 +15,24 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('tasks.index')" :active="request()->routeIs('tasks.index')">
+                        {{ __('Tasks') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.index')">
+                        {{ __('Tags') }}
+                    </x-nav-link>
+                    @if(Auth::user()->team)
+                    <x-nav-link :href="route('team.index')" :active="request()->routeIs('team.index')">
+                        {{ __('Team') }}
+                    </x-nav-link>
+                    @else
+                    <x-nav-link :href="route('team.join')" :active="request()->routeIs('team.join')">
+                        {{ __('Join a team') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('team.create')" :active="request()->routeIs('team.create')">
+                        {{ __('Create a team') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 
