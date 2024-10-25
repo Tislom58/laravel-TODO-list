@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Team;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TeamTaskController extends Controller
 {
@@ -86,5 +87,46 @@ class TeamTaskController extends Controller
         }
 
         return redirect(route('team.index'));
+    }
+
+    public function toggle_email_reminder(string $id)
+    {
+        // Query
+        $result = DB::table('team_task_user')
+            ->where('user_id', '=', Auth::id())
+            ->where('team_task_id', '=', $id)
+            ->first();
+
+        // Toggle the value
+        $toggle_value = !($result->email_reminder);
+
+        // Save changes
+        DB::table('team_task_user')
+            ->where('user_id', '=', Auth::id())
+            ->where('team_task_id', '=', $id)
+            ->update(['email_reminder' => $toggle_value]);
+
+        return redirect(route('team.index'));
+    }
+
+    public function toggle_push_reminder(string $id)
+    {
+        // Query
+        $result = DB::table('team_task_user')
+            ->where('user_id', '=', Auth::id())
+            ->where('team_task_id', '=', $id)
+            ->first();
+
+        // Toggle the value
+        $toggle_value = !($result->push_reminder);
+
+        // Save changes
+        DB::table('team_task_user')
+            ->where('user_id', '=', Auth::id())
+            ->where('team_task_id', '=', $id)
+            ->update(['push_reminder' => $toggle_value]);
+
+        return redirect(route('team.index'));
+
     }
 }

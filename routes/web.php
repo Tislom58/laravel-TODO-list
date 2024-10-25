@@ -56,6 +56,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/team-task-complete/{id}', [TeamTaskController::class, 'complete'])->name('team.task.complete');
     Route::get('/team-task-edit/{id}', [TeamTaskController::class, 'edit'])->name('team.task.edit');
     Route::put('/team-task-update/{id}', [TeamTaskController::class, 'update'])->name('team.task.update');
+    Route::patch('/team-task/{id}/toggle-email-reminder', [TeamTaskController::class, 'toggle_email_reminder'])
+        ->name('team.toggle-email-reminder');
+    Route::patch('/team-task/{id}/toggle-push-reminder', [TeamTaskController::class, 'toggle_push_reminder'])
+        ->name('team.toggle-push-reminder');
 });
 
 require __DIR__.'/auth.php';

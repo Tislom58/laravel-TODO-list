@@ -48,6 +48,23 @@
                                 <ul>{{ $member->name }}</ul>
                             @endforeach
                         </div>
+                        <div id="reminder" class="flex space-x-2 font-semibold text-xs items-center">
+                            <p>Remind me by: </p>
+                            <form action="{{ route('team.toggle-email-reminder', ['id' => $task->id]) }}" method="POST">
+                                @csrf
+                                @method('patch')
+                                <button type="submit" class="bg-gray-800 text-gray-300 p-2 rounded-lg hover:bg-gray-700">
+                                    Email
+                                </button>
+                            </form>
+                            <form action="{{ route('team.toggle-push-reminder', ['id' => $task->id]) }}" method="POST">
+                                @csrf
+                                @method('patch')
+                                <button type="submit" class="bg-gray-800 text-gray-300 p-2 rounded-lg hover:bg-gray-700">
+                                    Push
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             @endforeach
