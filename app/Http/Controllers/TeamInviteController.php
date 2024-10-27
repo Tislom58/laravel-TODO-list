@@ -11,14 +11,18 @@ class TeamInviteController extends Controller
 {
     public function store(Request $request)
     {
+        $request->validate([
+            'user_email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'exists:'.User::class.',email'],
+        ]);
+
         $invite = $request;
-        $invitee = User::find($invite->user);
+        $invitee = User::where('email', $invite->user_email)->first();
         $inviter = Auth::id();
 
         $invitee->invited_to_team_by_user = $inviter;
         $invitee->save();
 
-        return redirect('/team');
+        return redirect()->route('team.index');
     }
 
     public function accept()

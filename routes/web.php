@@ -5,6 +5,7 @@ use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamInviteController;
+use App\Http\Controllers\TeamTagController;
 use App\Http\Controllers\TeamTaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -60,6 +61,11 @@ Route::middleware('auth')->group(function () {
         ->name('team.toggle-email-reminder');
     Route::patch('/team-task/{id}/toggle-push-reminder', [TeamTaskController::class, 'toggle_push_reminder'])
         ->name('team.toggle-push-reminder');
+    Route::get('/team-tag/create', [TeamTagController::class, 'create'])->name('team.tag.create');
+    Route::post('/team-tag/store', [TeamTagController::class, 'store'])->name('team.tag.store');
+    Route::get('/team-tag/{id}/edit', [TeamTagController::class, 'edit'])->name('team.tag.edit');
+    Route::put('/team-tag/{id}/update', [TeamTagController::class, 'update'])->name('team.tag.update');
+    Route::delete('/team-tag/{id}/destroy', [TeamTagController::class, 'destroy'])->name('team.tag.destroy');
 });
 
 require __DIR__.'/auth.php';

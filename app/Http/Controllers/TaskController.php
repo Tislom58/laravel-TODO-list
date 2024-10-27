@@ -28,7 +28,7 @@ class   TaskController extends Controller
 
     public function create(): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
-        $user = User::find(Auth::id());
+        $user = Auth::user();
         $tags = $user->tags;
 
         return view('tasks.create', [
@@ -39,7 +39,7 @@ class   TaskController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $task = new Task();
-        $user = User::find(Auth::id());
+        $user = Auth::user();
 
         $task->description = $request->description;
         $task->due_date = $request->due_date;
@@ -79,7 +79,7 @@ class   TaskController extends Controller
     {
         $task = Task::find($id);
 
-        if (User::find(Auth::id())->id === $task->user_id)
+        if (Auth::user()->id === $task->user_id)
         {
             return view('tasks.edit', [
                 'task' => $task,
@@ -99,7 +99,7 @@ class   TaskController extends Controller
 
         if($request->tags)
         {
-            $tag_keys = User::find(Auth::id())
+            $tag_keys = Auth::user()
                 ->tags()
                 ->whereIn('name', $request->tags)
                 ->pluck('id');
@@ -112,7 +112,7 @@ class   TaskController extends Controller
 
     public function filter(Request $request): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
-        $user = User::find(Auth::id());
+        $user = Auth::user();
         $tag_keys = $user->tags()
             ->whereIn('name', $request->filter)
             ->pluck('id');

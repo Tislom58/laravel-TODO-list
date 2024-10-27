@@ -11,10 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('team_task_user', function (Blueprint $table) {
-            $table->boolean('email_reminder')->default('0');
-            $table->boolean('push_reminder')->default('0');
-        });
+        Schema::rename('team_tag_task', 'team_tag_team_task');
     }
 
     /**
@@ -22,8 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('team_task_user', function (Blueprint $table) {
-            //
-        });
+        Schema::rename('team_tag_team_task', 'team_tag_task');
     }
 };

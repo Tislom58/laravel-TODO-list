@@ -6,13 +6,22 @@
         @csrf
 
         <label>
-            <span>Task: </span>
+            <span>Task description: </span>
             <input type="text" name="description" class="bg-gray-500 rounded-xl">
         </label>
 
         <label>
             <span>Due date: </span>
             <input type="date" name="due_date" class="bg-gray-500 rounded-xl">
+        </label>
+
+        <label>
+            <span>Select tags: </span>
+            <select multiple name="tags[]" class="bg-gray-500 rounded-xl">
+                @foreach($tags as $tag)
+                    <option value="{{ $tag->id }}" style="color: {{ $tag->color }}">{{ $tag->name }}</option>
+                @endforeach
+            </select>
         </label>
 
         <label for="assignment"></label>

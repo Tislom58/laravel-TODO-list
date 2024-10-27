@@ -12,7 +12,7 @@
             @php
                 // Obtain tags associated with each task
                 $task_tags = $task->tags()->pluck('name')->toArray();
-                $tags = User::find(Auth::id())->tags;
+                $tags = Auth::user()->tags;
             @endphp
             <div class="space-x-4 m-6 inline-flex" id="{{ $task->id }}">
                 <input type="text" name="description" value="{{ $task->description }}" class="bg-gray-500 rounded-xl">
@@ -21,7 +21,7 @@
 
                 <select multiple name="tags[]" class="bg-gray-500 rounded-xl">
                     @foreach($tags as $tag)
-                        {{--                    Display tags and preselect ones that are active --}}
+                        {{-- Display tags and preselect ones that are active --}}
                         @if( in_array($tag->name, $task_tags) )
                             <option selected="selected" style="color: {{ $tag->color }}"> {{ $tag->name }} </option>
                         @else
