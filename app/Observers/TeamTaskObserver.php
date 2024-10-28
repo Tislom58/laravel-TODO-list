@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\TeamTask;
+use Illuminate\Support\Facades\DB;
 
 class TeamTaskObserver
 {
@@ -11,7 +12,13 @@ class TeamTaskObserver
      */
     public function created(TeamTask $teamTask): void
     {
-        //
+        $team_members = $teamTask->team->members;
+        foreach ($team_members as $member) {
+            DB::table('reminder_preferences')->insert([
+                'team_task_id' => $teamTask->id,
+                'user_id' => $member->id,
+            ]);
+        }
     }
 
     /**

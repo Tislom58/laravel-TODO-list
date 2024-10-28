@@ -8,6 +8,7 @@
         <div>
             <x-input-label for="create_new_team" :value="__('Team name')" />
             <x-text-input id="create_new_team" name="team_name" type="text" class="mt-1 block" />
+            <x-input-error :messages="$errors->all()" class="mt-2" />
         </div>
 
         <div>

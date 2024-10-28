@@ -18,18 +18,18 @@
                     </div>
                     {{-- Right column --}}
                     <div id="buttons" class="flex justify-end space-x-4">
-                        @if(Auth::id() === $tag->author_id)
+                        @if(Auth::id() === $tag->author_id || Auth::id() === $team->author_id)
                             <x-secondary-button id="edit" class="normal-case">
                                 <a href="{{ route('team.tag.edit', ['id' => $tag->id]) }}">Edit</a>
                             </x-secondary-button>
+                            <x-secondary-button id="delete">
+                                <form action="{{ route('team.tag.destroy', ['id' => $tag->id]) }}" method="POST">
+                                    @csrf
+                                    @method('delete')
+                                    <input type="submit" value="Delete" class="cursor-pointer">
+                                </form>
+                            </x-secondary-button>
                         @endif
-                        <x-secondary-button id="delete">
-                            <form action="{{ route('team.tag.destroy', ['id' => $tag->id]) }}" method="POST">
-                                @csrf
-                                @method('delete')
-                                <input type="submit" value="Delete" class="cursor-pointer">
-                            </form>
-                        </x-secondary-button>
                     </div>
                 </div>
             @endforeach
@@ -49,6 +49,17 @@
                     ->where('user_id', Auth::id())
                     ->where('team_task_id', $task->id)
                     ->first();
+
+                    $email_reminder = DB::table('reminder_preferences')
+                    ->where('team_task_id', $task->id)
+                    ->where('user_id', Auth::id())
+                    ->value('email_reminder');
+
+                    $push_reminder = DB::table('reminder_preferences')
+                    ->where('team_task_id', $task->id)
+                    ->where('user_id', Auth::id())
+                    ->value('push_reminder');
+
                 @endphp
                 <div class="task p-4 w-full bg-gray-500 rounded-lg shadow-md items-center block"
                      id="{{ $task->id }}">
@@ -72,18 +83,19 @@
                                     <input type="submit" value="Complete" class="cursor-pointer">
                                 </form>
                             </x-secondary-button>
-                            @if(Auth::id() === $task->author_id)
+                            @if(Auth::id() === $task->author_id  || Auth::id() === $team->author_id)
                                 <x-secondary-button id="edit" class="normal-case">
                                     <a href="{{ route('team.task.edit', ['id' => $task->id]) }}">Edit</a>
                                 </x-secondary-button>
+
+                                <x-secondary-button id="delete">
+                                    <form action="{{ route('team.task.destroy', ['id' => $task->id]) }}" method="POST">
+                                        @csrf
+                                        @method('delete')
+                                        <input type="submit" value="Delete" class="cursor-pointer">
+                                    </form>
+                                </x-secondary-button>
                             @endif
-                            <x-secondary-button id="delete">
-                                <form action="{{ route('team.task.destroy', ['id' => $task->id]) }}" method="POST">
-                                    @csrf
-                                    @method('delete')
-                                    <input type="submit" value="Delete" class="cursor-pointer">
-                                </form>
-                            </x-secondary-button>
                         </div>
                         <div class="flex space-x-2 font-semibold text-xs">
                             <p>Assigned to: </p>
@@ -97,7 +109,7 @@
                             <form action="{{ route('team.toggle-email-reminder', ['id' => $task->id]) }}" method="POST">
                                 @csrf
                                 @method('patch')
-                                @if( isset($team_task_user->email_reminder) )
+                                @if( $email_reminder )
                                     <button type="submit"
                                             class="bg-gray-300 text-gray-800 p-2 rounded-lg hover:bg-gray-400">
                                         Email
@@ -113,7 +125,7 @@
                             <form action="{{ route('team.toggle-push-reminder', ['id' => $task->id]) }}" method="POST">
                                 @csrf
                                 @method('patch')
-                                @if( isset($team_task_user->push_reminder) )
+                                @if( $push_reminder )
                                     <button type="submit"
                                             class="bg-gray-300 text-gray-800 p-2 rounded-lg hover:bg-gray-400">
                                         Push
@@ -138,7 +150,24 @@
             <div class="space-y-3">
                 <h1 class="text-2xl font-semibold">Team members</h1>
                 @foreach( $team->members as $member )
-                    <ul class="p-2 text-lg rounded bg-gray-800">{{ $member->name }} @if( $member->id === $team->author_id ) (Author) @endif </ul>
+                    <div class="p-2 text-lg rounded bg-gray-800 w-full grid grid-cols-2">
+                        <div>
+                            <p>{{ $member->name }} @if( $member->id === $team->author_id ) (Author) @endif </p>
+                        </div>
+                        <div class="justify-self-end">
+                            {{-- If team admin is authorized --}}
+                            @if( Auth::id() === $team->author_id )
+                                @if( $member->id !== $team->author_id )
+
+                                    <form action="{{ route('team.kick', ['id' => $member->id]) }}" method="POST">
+                                        @csrf
+                                        @method('patch')
+                                        <button type="submit" class="p-1 rounded-md bg-red-700 hover:bg-red-800 text-gray-200 font-semibold text-sm shadow-sm border-gray-500">Remove</button>
+                                    </form>
+                                @endif
+                            @endif
+                        </div>
+                    </div>
                 @endforeach
             </div>
             @if( Auth::id() === $team->author_id )
@@ -152,7 +181,21 @@
 
                         <x-primary-button>Invite</x-primary-button>
                     </form>
+
                 </div>
+                <form action="{{ route('team.leave') }}" method="POST" class="justify-self-end">
+                    @csrf
+                    @method('patch')
+
+                    <button type="submit" class="rounded-lg bg-red-700 hover:bg-red-800 text-gray-200 font-bold p-2 shadow-sm border-gray-500">Disband team</button>
+                </form>
+            @else
+                <form action="{{ route('team.leave') }}" method="POST" class="justify-self-end">
+                    @csrf
+                    @method('patch')
+
+                    <button type="submit" class="rounded-lg bg-red-700 hover:bg-red-800 text-gray-200 font-bold p-2 shadow-sm border-gray-500">Leave team</button>
+                </form>
             @endif
         </div>
     </div>

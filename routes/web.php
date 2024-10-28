@@ -66,6 +66,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/team-tag/{id}/edit', [TeamTagController::class, 'edit'])->name('team.tag.edit');
     Route::put('/team-tag/{id}/update', [TeamTagController::class, 'update'])->name('team.tag.update');
     Route::delete('/team-tag/{id}/destroy', [TeamTagController::class, 'destroy'])->name('team.tag.destroy');
+    Route::patch('/team/leave', [TeamController::class, 'leave'])->name('team.leave');
+    Route::patch('/team/kick/{id}', [TeamController::class, 'kick'])->name('team.kick');
+    Route::patch('/team/disband', [TeamController::class, 'disband'])->name('team.disband');
 });
 
 require __DIR__.'/auth.php';

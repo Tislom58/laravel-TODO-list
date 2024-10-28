@@ -16,7 +16,7 @@ class TeamTaskController extends Controller
     {
         $user = Auth::user();
         $team = $user->team;
-        $tags = $team->tags;
+        $tags = $team->team_tags;
 
         return view('team.tasks.create', [
             'user' => $user,
@@ -27,6 +27,11 @@ class TeamTaskController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'description' => ['required', 'string', 'max:255'],
+            'due_date' => ['string', 'date'],
+        ]);
+
         $team_task = new TeamTask();
         $team_task->description = $request->description;
         $team_task->due_date = $request->due_date;
@@ -82,6 +87,11 @@ class TeamTaskController extends Controller
 
     public function update(string $id, Request $request)
     {
+        $request->validate([
+            'description' => ['required', 'string', 'max:255'],
+            'due_date' => ['string', 'date'],
+        ]);
+
         $team_task = TeamTask::find($id);
 
         $team_task->description = $request->description;
@@ -101,7 +111,7 @@ class TeamTaskController extends Controller
     public function toggle_email_reminder(string $id)
     {
         // Query
-        $result = DB::table('team_task_user')
+        $result = DB::table('reminder_preferences')
             ->where('user_id', '=', Auth::id())
             ->where('team_task_id', '=', $id)
             ->first();
@@ -110,7 +120,7 @@ class TeamTaskController extends Controller
         $toggle_value = !($result->email_reminder);
 
         // Save changes
-        DB::table('team_task_user')
+        DB::table('reminder_preferences')
             ->where('user_id', '=', Auth::id())
             ->where('team_task_id', '=', $id)
             ->update(['email_reminder' => $toggle_value]);
@@ -121,7 +131,7 @@ class TeamTaskController extends Controller
     public function toggle_push_reminder(string $id)
     {
         // Query
-        $result = DB::table('team_task_user')
+        $result = DB::table('reminder_preferences')
             ->where('user_id', '=', Auth::id())
             ->where('team_task_id', '=', $id)
             ->first();
@@ -130,7 +140,7 @@ class TeamTaskController extends Controller
         $toggle_value = !($result->push_reminder);
 
         // Save changes
-        DB::table('team_task_user')
+        DB::table('reminder_preferences')
             ->where('user_id', '=', Auth::id())
             ->where('team_task_id', '=', $id)
             ->update(['push_reminder' => $toggle_value]);

@@ -29,6 +29,11 @@ class TagController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'color' => ['hex_color'],
+        ]);
+
         $tag = new Tag();
         $user = User::find(Auth::id());
         $tag->name = $request->name;
@@ -58,6 +63,11 @@ class TagController extends Controller
 
     public function update(Request $request, string $id): RedirectResponse
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'color' => ['hex_color'],
+        ]);
+
         $tag = Tag::find($id);
 
         $tag->name = $request->name;

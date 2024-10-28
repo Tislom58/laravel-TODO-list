@@ -14,6 +14,11 @@ class TeamTagController extends Controller
     }
     public function store(Request $request)
     {
+        $request->validate([
+           'name' => ['required', 'string', 'max:255'],
+           'color' => ['hex_color'],
+        ]);
+
         $new_tag = new TeamTag();
         $new_tag->name = $request->name;
         $new_tag->color = $request->color;
@@ -33,6 +38,11 @@ class TeamTagController extends Controller
 
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'color' => ['hex_color'],
+        ]);
+
         $tag = TeamTag::find($id);
 
         $tag->name = $request->name;

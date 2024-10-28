@@ -16,6 +16,7 @@
             <input type="color" name="color">
         </label>
 
+        <x-input-error :messages="$errors->all()" class="mt-2" />
         <x-primary-button>Add tag</x-primary-button>
 
     </form>

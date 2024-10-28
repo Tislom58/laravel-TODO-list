@@ -41,16 +41,47 @@ class TeamController extends Controller
     public function store(Request $request)
     {
         // Create new team
+        $request->validate([
+           'team_name' => ['required', 'string', 'max:255'],
+        ]);
+
         $team = new Team();
         $user = Auth::user();
 
         $team->name = $request->team_name;
-        $team->creator_id = $user->id;
+        $team->author_id = $user->id;
         $team->save();
 
         $user->team_id = $team->id;
         $user->save();
 
         return redirect(route('team.index'));
+    }
+
+    public function leave()
+    {
+        $user = Auth::user();
+        $user->team_id = null;
+
+        $user->save();
+
+        return redirect(route('tasks.index'));
+    }
+
+    public function kick(string $id)
+    {
+        $kicked_member = User::find($id);
+        $kicked_member->team_id = null;
+        $kicked_member->save();
+
+        return redirect(route('team.index'));
+    }
+
+    public function disband()
+    {
+        $team = Auth::user()->team;
+        $team->delete();
+
+        return redirect(route('tasks.index'));
     }
 }

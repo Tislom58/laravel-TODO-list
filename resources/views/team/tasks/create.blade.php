@@ -33,6 +33,7 @@
             @endforeach
         </select>
 
+        <x-input-error :messages="$errors->all()" class="mt-2" />
         <x-primary-button>Add task</x-primary-button>
     </form>
 </div>

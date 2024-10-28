@@ -38,6 +38,11 @@ class   TaskController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $request->validate([
+            'description' => ['required', 'string', 'max:255'],
+            'due_date' => ['string', 'date'],
+        ]);
+
         $task = new Task();
         $user = Auth::user();
 
@@ -90,6 +95,11 @@ class   TaskController extends Controller
 
     public function update(Request $request, string $id): RedirectResponse
     {
+        $request->validate([
+            'description' => ['required', 'string', 'max:255'],
+            'due_date' => ['string', 'date'],
+        ]);
+
         $task = Task::find($id);
 
         $task->description = $request->description;

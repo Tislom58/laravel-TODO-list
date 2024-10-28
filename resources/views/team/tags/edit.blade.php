@@ -11,6 +11,7 @@
             <input type="text" name="name" value="{{ $tag->name }}">
             <p> | </p>
             <input type="color" name="color" value="{{ $tag->color }}">
+            <x-input-error :messages="$errors->all()" class="mt-2" />
             <x-primary-button>Save</x-primary-button>
         </div>
     </form>

@@ -38,6 +38,7 @@
                 @endforeach
             </select>
 
+            <x-input-error :messages="$errors->all()" class="mt-2" />
             <x-primary-button>Save</x-primary-button>
         </form>
     </div>
